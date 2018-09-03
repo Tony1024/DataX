@@ -1,5 +1,6 @@
 package com.alibaba.datax.plugin.rdbms.reader.util;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.datax.common.constant.CommonConstant;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.plugin.rdbms.reader.Constant;
@@ -51,6 +52,12 @@ public final class ReaderSplitUtil {
 
             // 说明是配置的 table 方式
             if (isTableMode) {
+                // 关联表的querySqlList
+                List<String> querySqlList = new ArrayList<String>();
+                if (CollectionUtil.isNotEmpty(connConf.getList(Key.QUERY_SQL_List, String.class))) {
+                    querySqlList = connConf.getList(Key.QUERY_SQL_List, String.class);
+                }
+
                 // 已在之前进行了扩展和`处理，可以直接使用
                 List<String> tables = connConf.getList(Key.TABLE, String.class);
 
@@ -81,11 +88,18 @@ public final class ReaderSplitUtil {
                         splittedConfigs.addAll(splittedSlices);
                     }
                 } else {
-                    for (String table : tables) {
+                    for (int index = 0; index < tables.size(); index++) {
                         tempSlice = sliceConfig.clone();
-                        tempSlice.set(Key.TABLE, table);
-                        String queryColumn = HintUtil.buildQueryColumn(jdbcUrl, table, column);
-                        tempSlice.set(Key.QUERY_SQL, SingleTableSplitUtil.buildQuerySql(queryColumn, table, where));
+                        tempSlice.set(Key.TABLE, tables.get(index));
+                        if (querySqlList.size() > 0) {
+                            String querySql = querySqlList.get(index);
+                            if (StringUtils.isNotBlank(querySql)) {
+                                tempSlice.set(Key.QUERY_SQL, querySql);
+                            }
+                        } else {
+                            String queryColumn = HintUtil.buildQueryColumn(jdbcUrl, tables.get(index), column);
+                            tempSlice.set(Key.QUERY_SQL, SingleTableSplitUtil.buildQuerySql(queryColumn, tables.get(index), where));
+                        }
                         splittedConfigs.add(tempSlice);
                     }
                 }
