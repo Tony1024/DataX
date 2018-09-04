@@ -1,0 +1,23 @@
+{
+    "name": "customized-mysqlwriter",
+    "parameter": {
+        "username": "",
+        "password": "",
+        "writeMode": "",
+        "sourceClass": "",
+        "targetClass": "",
+        "processorClass": "",
+        "batchByteSize": "",
+        "session": [],
+        "preSql": [],
+        "connection": [
+            {
+                "jdbcUrl": "",
+                "table": []
+            }
+        ],
+        "bizDataDbUrl": "",
+        "bizDataDbUser": "",
+        "bizDataDbPassword": ""
+    }
+}

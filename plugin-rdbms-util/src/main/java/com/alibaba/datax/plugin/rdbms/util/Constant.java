@@ -22,6 +22,17 @@ public final class Constant {
     public static final String ORACLE_SELECT_PRI = "insufficient privileges";
     public static final String ORACLE_SQL = "invalid identifier";
 
+    public final static String SOURCE_CLASS = "sourceClass";
+
+    public final static String TARGET_CLASS = "targetClass";
+
+    public final static String PROCESSOR_CLASS = "processorClass";
+
+    public final static String BIZ_DATA_DB_URL = "bizDataDbUrl";
+
+    public final static String BIZ_DATA_DB_USER = "bizDataDbUser";
+
+    public final static String BIZ_DATA_DB_PASSWORD = "bizDataDbPassword";
 
 
 }

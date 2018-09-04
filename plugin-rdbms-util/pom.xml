@@ -65,7 +65,7 @@
         </dependency>
 		<dependency>
 			<groupId>com.alibaba.datax</groupId>
-			<artifactId>sinohealth-processors</artifactId>
+			<artifactId>data-processors</artifactId>
 			<version>${datax-project-version}</version>
 		</dependency>
     </dependencies>

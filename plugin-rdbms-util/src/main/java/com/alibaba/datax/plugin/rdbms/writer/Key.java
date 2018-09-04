@@ -38,16 +38,4 @@ public final class Key {
 
     public final static String DRYRUN = "dryRun";
 
-    public final static String SOURCE_CLASS = "sourceClass";
-
-    public final static String TARGET_CLASS = "targetClass";
-
-    public final static String PROCESSOR_CLASS = "processorClass";
-
-    public final static String INIT_DATA_DB_URL = "initDataDbUrl";
-
-    public final static String INIT_DATA_DB_USER = "initDataDbUser";
-
-    public final static String INIT_DATA_DB_PASSWORD = "initDataDbPassword";
-
 }

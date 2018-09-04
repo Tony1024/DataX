@@ -7,7 +7,7 @@ import com.alibaba.datax.common.util.ListUtil;
 import com.alibaba.datax.plugin.rdbms.util.*;
 import com.alibaba.datax.plugin.rdbms.writer.Constant;
 import com.alibaba.datax.plugin.rdbms.writer.Key;
-import com.sinohealth.datax.reflection.Reflector;
+import com.tony.datax.reflection.Reflector;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public final class OriginalConfPretreatmentUtil {
             if (null == tables || tables.isEmpty()) {
                 tables = new ArrayList<String>();
                 try {
-                    Reflector reflector = Reflector.forClass(Class.forName("com.sinohealth.datax.entity.target." + originalConfig.getString(Key.TARGET_CLASS)));
+                    Reflector reflector = Reflector.forClass(Class.forName("com.sinohealth.datax.entity.target." + originalConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.TARGET_CLASS)));
                     tables.add(reflector.getTableName());
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -104,7 +104,7 @@ public final class OriginalConfPretreatmentUtil {
     public static void dealColumnConf(Configuration originalConfig, ConnectionFactory connectionFactory, String oneTable) {
         List<String> userConfiguredColumns = originalConfig.getList(Key.COLUMN, String.class);
         if (null == userConfiguredColumns || userConfiguredColumns.isEmpty()) {
-            String targetClass = "com.sinohealth.datax.entity.target." + originalConfig.getString(Key.TARGET_CLASS);
+            String targetClass = "com.sinohealth.datax.entity.target." + originalConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.TARGET_CLASS);
             try {
                 Class targetClazz = Class.forName(targetClass);
                 Reflector reflector = Reflector.forClass(targetClazz);
@@ -163,7 +163,7 @@ public final class OriginalConfPretreatmentUtil {
     public static void dealWriteMode(Configuration originalConfig, DataBaseType dataBaseType) {
         List<String> columns = originalConfig.getList(Key.COLUMN, String.class);
         if (CollectionUtil.isEmpty(columns)) {
-            String targetClass = "com.sinohealth.datax.entity.target." + originalConfig.getString(Key.TARGET_CLASS);
+            String targetClass = "com.sinohealth.datax.entity.target." + originalConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.TARGET_CLASS);
             try {
                 Class targetClazz = Class.forName(targetClass);
                 Reflector reflector = Reflector.forClass(targetClazz);
