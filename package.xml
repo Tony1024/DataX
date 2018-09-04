@@ -33,6 +33,13 @@
             <outputDirectory>datax</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>customized-mysqlreader/target/datax/</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <outputDirectory>datax</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>oceanbasereader/target/datax/</directory>
             <includes>
                 <include>**/*.*</include>
@@ -55,6 +62,13 @@
         </fileSet>
         <fileSet>
             <directory>sqlserverreader/target/datax/</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <outputDirectory>datax</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>customized-sqlserverreader/target/datax/</directory>
             <includes>
                 <include>**/*.*</include>
             </includes>
@@ -163,6 +177,13 @@
         <!-- writer -->
         <fileSet>
             <directory>mysqlwriter/target/datax/</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <outputDirectory>datax</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>customized-mysqlwriter/target/datax/</directory>
             <includes>
                 <include>**/*.*</include>
             </includes>
