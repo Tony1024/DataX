@@ -17,7 +17,7 @@ import java.util.List;
  **/
 public class DBHelper {
 
-    public static <T> T parseResultObj(Class<T> clazz, ResultSet rs) throws Exception {
+    public static <T> T parseResultObj(Class<T> clazz, ResultSet rs) {
         T obj = null;
         try {
             if (rs != null && !rs.wasNull()) {
@@ -34,34 +34,34 @@ public class DBHelper {
                         }
                         String propertyname = reflector.getFieldName(columname);
                         if (reflector.hasSetter(propertyname)) {
-                            Object columnvalue = rs.getObject(i);
-                            if (columnvalue != null) {
+                            Object columnValue = rs.getObject(i);
+                            if (columnValue != null) {
                                 try {
                                     Class<?> fieldtype = reflector.getSetterType(propertyname);
 
                                     if (fieldtype.equals(Short.class) || fieldtype.equals(short.class)) {
-                                        columnvalue = rs.getShort(i);
+                                        columnValue = rs.getShort(i);
                                     } else if (fieldtype.equals(Byte.class) || fieldtype.equals(byte.class)) {
-                                        columnvalue = rs.getByte(i);
+                                        columnValue = rs.getByte(i);
                                     } else if (fieldtype.equals(Integer.class) || fieldtype.equals(int.class)) {
-                                        columnvalue = rs.getInt(i);
+                                        columnValue = rs.getInt(i);
                                     } else if (fieldtype.equals(Long.class) || fieldtype.equals(long.class)) {
-                                        columnvalue = rs.getLong(i);
+                                        columnValue = rs.getLong(i);
                                     } else if (fieldtype.equals(Float.class) || fieldtype.equals(float.class)) {
-                                        columnvalue = rs.getFloat(i);
+                                        columnValue = rs.getFloat(i);
                                     } else if (fieldtype.equals(Double.class) || fieldtype.equals(double.class)) {
-                                        columnvalue = rs.getDouble(i);
+                                        columnValue = rs.getDouble(i);
                                     } else if (fieldtype.equals(Boolean.class) || fieldtype.equals(boolean.class)) {
-                                        columnvalue = rs.getBoolean(i);
+                                        columnValue = rs.getBoolean(i);
                                     } else if (fieldtype.equals(Date.class)) {
-                                        columnvalue = rs.getTimestamp(i);
+                                        columnValue = rs.getTimestamp(i);
                                     } else if (fieldtype.equals(String.class)) {
-                                        columnvalue = rs.getString(i);
+                                        columnValue = rs.getString(i);
                                     }
 
-                                    reflector.getSetInvoker(propertyname).invoke(obj, new Object[]{columnvalue});
+                                    reflector.getSetInvoker(propertyname).invoke(obj, new Object[]{columnValue});
                                 } catch (Exception e) {
-                                    throw new Exception("DaoHelper.parseResultObj faild,columname:" + columname, e);
+                                    throw new Exception("DaoHelper.parseResultObj faild,columnName:" + columname, e);
                                 }
                             }
                         }
@@ -69,7 +69,7 @@ public class DBHelper {
                 }
             }
         } catch (Exception e) {
-            throw new Exception("DaoHelper.parseResultObj faild", e);
+            return null;
         }
         return obj;
     }
@@ -85,39 +85,39 @@ public class DBHelper {
                     ObjectFactory objectFactory = new DefaultObjectFactory();
                     T obj = objectFactory.create(clazz);
                     for (int i = 1; i <= columnCount; i++) {
-                        String columname = md.getColumnLabel(i);
-                        if (StrUtil.isBlank(columname)) {
-                            columname = md.getColumnName(i);
+                        String columnName = md.getColumnLabel(i);
+                        if (StrUtil.isBlank(columnName)) {
+                            columnName = md.getColumnName(i);
                         }
-                        String propertyname = reflector.getFieldName(columname);
+                        String propertyname = reflector.getFieldName(columnName);
                         if (reflector.hasSetter(propertyname)) {
-                            Object columnvalue = rs.getObject(i);
-                            if (columnvalue != null) {
+                            Object columnValue = rs.getObject(i);
+                            if (columnValue != null) {
                                 try {
                                     Class<?> fieldtype = reflector.getSetterType(propertyname);
                                     if (fieldtype.equals(Short.class) || fieldtype.equals(short.class)) {
-                                        columnvalue = rs.getShort(i);
+                                        columnValue = rs.getShort(i);
                                     } else if (fieldtype.equals(Byte.class) || fieldtype.equals(byte.class)) {
-                                        columnvalue = rs.getByte(i);
+                                        columnValue = rs.getByte(i);
                                     } else if (fieldtype.equals(Integer.class) || fieldtype.equals(int.class)) {
-                                        columnvalue = rs.getInt(i);
+                                        columnValue = rs.getInt(i);
                                     } else if (fieldtype.equals(Long.class) || fieldtype.equals(long.class)) {
-                                        columnvalue = rs.getLong(i);
+                                        columnValue = rs.getLong(i);
                                     } else if (fieldtype.equals(Float.class) || fieldtype.equals(float.class)) {
-                                        columnvalue = rs.getFloat(i);
+                                        columnValue = rs.getFloat(i);
                                     } else if (fieldtype.equals(Double.class) || fieldtype.equals(double.class)) {
-                                        columnvalue = rs.getDouble(i);
+                                        columnValue = rs.getDouble(i);
                                     } else if (fieldtype.equals(Boolean.class) || fieldtype.equals(boolean.class)) {
-                                        columnvalue = rs.getBoolean(i);
+                                        columnValue = rs.getBoolean(i);
                                     } else if (fieldtype.equals(Date.class)) {
-                                        columnvalue = rs.getTimestamp(i);
+                                        columnValue = rs.getTimestamp(i);
                                     } else if (fieldtype.equals(String.class)) {
-                                        columnvalue = rs.getString(i);
+                                        columnValue = rs.getString(i);
                                     }
 
-                                    reflector.getSetInvoker(propertyname).invoke(obj, new Object[]{columnvalue});
+                                    reflector.getSetInvoker(propertyname).invoke(obj, new Object[]{columnValue});
                                 } catch (Exception e) {
-                                    throw new Exception("DaoHelper.parseResultList faild,columname:" + columname, e);
+                                    throw new Exception("DaoHelper.parseResultList failed,columnName:" + columnName, e);
                                 }
                             }
                         }
@@ -126,7 +126,7 @@ public class DBHelper {
                 }
             }
         } catch (Exception e) {
-            throw new Exception("DaoHelper.parseResultList faild", e);
+            throw new Exception("DaoHelper.parseResultList failed", e);
         }
         return array;
     }

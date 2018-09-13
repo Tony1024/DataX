@@ -15,7 +15,7 @@
             {
                 "jdbcUrl": "",
                 "table": [],
-                "querySqlList": []
+                "querySqlTemplate": ""
             }
         ],
         "bizDataDbUrl": "",

@@ -22,9 +22,9 @@ import com.alibaba.datax.plugin.rdbms.util.RdbmsException;
 import com.google.common.collect.Lists;
 import com.tony.datax.common.Processor;
 import com.tony.datax.entity.BizData;
+import com.tony.datax.reflection.Reflector;
 import com.tony.datax.reflection.factory.DefaultObjectFactory;
 import com.tony.datax.reflection.factory.ObjectFactory;
-import com.tony.datax.utils.DBHelper;
 import com.tony.datax.utils.ReflectUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,6 +36,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -233,32 +234,81 @@ public class CustomizedRdbmsReader {
             DBUtil.dealWithSessionConfig(conn, readerSliceConfig,
                     this.dataBaseType, basicMsg);
 
-            int columnNumber = 0;
             ResultSet rs = null;
             try {
                 rs = DBUtil.query(conn, querySql, fetchSize);
                 queryPerfRecord.end();
 
-                long t1 = System.currentTimeMillis();
-                List<?> sourceList = DBHelper.parseResultList(sourceClass, rs);
-                long t2 = System.currentTimeMillis();
-                LOG.info("ResultSet transform to Entity List Size: [{}] spend time : [{}]", sourceList.size(), t2 - t1);
+                //这个统计干净的result_Next时间
+                PerfRecord allResultPerfRecord = new PerfRecord(taskGroupId, taskId, PerfRecord.PHASE.RESULT_NEXT_ALL);
+                allResultPerfRecord.start();
+
+                long rsNextUsedTime = 0;
+                long lastTime = System.nanoTime();
 
                 ObjectFactory objectFactory = new DefaultObjectFactory();
                 Object targetEntity = objectFactory.create(targetClass);
-                if (CollectionUtil.isNotEmpty(sourceList)) {
-                    for (Object sourceEntity : sourceList) {
+
+                if (rs != null && !rs.wasNull()) {
+                    ResultSetMetaData md = rs.getMetaData();
+                    int columnCount = md.getColumnCount();
+                    Reflector reflector = Reflector.forClass(sourceClass);
+                    while (rs.next()) {
+                        rsNextUsedTime += (System.nanoTime() - lastTime);
+
+                        Object sourceEntity = objectFactory.create(sourceClass);
+                        for (int i = 1; i <= columnCount; i++) {
+                            String columnName = md.getColumnLabel(i);
+                            if (StrUtil.isBlank(columnName)) {
+                                columnName = md.getColumnName(i);
+                            }
+                            String propertyName = reflector.getFieldName(columnName);
+                            if (reflector.hasSetter(propertyName)) {
+                                Object columnValue = rs.getObject(i);
+                                if (columnValue != null) {
+                                    try {
+                                        Class<?> fieldType = reflector.getSetterType(propertyName);
+                                        if (fieldType.equals(Short.class) || fieldType.equals(short.class)) {
+                                            columnValue = rs.getShort(i);
+                                        } else if (fieldType.equals(Byte.class) || fieldType.equals(byte.class)) {
+                                            columnValue = rs.getByte(i);
+                                        } else if (fieldType.equals(Integer.class) || fieldType.equals(int.class)) {
+                                            columnValue = rs.getInt(i);
+                                        } else if (fieldType.equals(Long.class) || fieldType.equals(long.class)) {
+                                            columnValue = rs.getLong(i);
+                                        } else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
+                                            columnValue = rs.getFloat(i);
+                                        } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
+                                            columnValue = rs.getDouble(i);
+                                        } else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
+                                            columnValue = rs.getBoolean(i);
+                                        } else if (fieldType.equals(Date.class)) {
+                                            columnValue = rs.getTimestamp(i);
+                                        } else if (fieldType.equals(String.class)) {
+                                            columnValue = rs.getString(i);
+                                        }
+
+                                        reflector.getSetInvoker(propertyName).invoke(sourceEntity, new Object[]{columnValue});
+                                    } catch (Exception e) {
+                                        throw new Exception("DaoHelper.parseResultList failed,columnName:" + columnName, e);
+                                    }
+                                }
+                            }
+                        }
+
                         if (sourceEntity != null) {
                             targetEntity = processor.dataProcess(sourceEntity, targetEntity, this.bizData);
                             Record record = recordSender.createRecord();
                             record = ReflectUtil.getRecord(record, targetEntity);
                             recordSender.sendToWriter(record);
+
                         }
 
-
+                        lastTime = System.nanoTime();
                     }
                 }
 
+                allResultPerfRecord.end(rsNextUsedTime);
                 //目前大盘是依赖这个打印，而之前这个Finish read record是包含了sql查询和result next的全部时间
                 LOG.info("Finished read record by Sql: [{}\n] {}.",
                         querySql, basicMsg);
