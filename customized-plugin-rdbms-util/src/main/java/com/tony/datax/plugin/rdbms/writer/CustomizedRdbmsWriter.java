@@ -247,9 +247,9 @@ public class CustomizedRdbmsWriter {
                 LOG.info("targetClass:[{}]", writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.TARGET_CLASS));
                 LOG.info("processClass:[{}]", writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.PROCESSOR_CLASS));
 
-                this.sourceClass = Class.forName("com.sinohealth.datax.entity.source." + writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.SOURCE_CLASS));
-                this.targetClass = Class.forName("com.sinohealth.datax.entity.target." + writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.TARGET_CLASS));
-                this.processor = (Processor) new DefaultObjectFactory().create(Class.forName("com.sinohealth.datax.processors." + writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.PROCESSOR_CLASS)));
+                this.sourceClass = Class.forName("com.tony.datax.entity.source." + writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.SOURCE_CLASS));
+                this.targetClass = Class.forName("com.tony.datax.entity.target." + writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.TARGET_CLASS));
+                this.processor = (Processor) new DefaultObjectFactory().create(Class.forName("com.tony.datax.processors." + writerSliceConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.PROCESSOR_CLASS)));
             } catch (ClassNotFoundException ex) {
                 LOG.error("sourceClass/targetClass/processor class not found", ex);
             }

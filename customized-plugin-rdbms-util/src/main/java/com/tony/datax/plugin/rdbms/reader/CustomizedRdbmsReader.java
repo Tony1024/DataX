@@ -1,6 +1,5 @@
 package com.tony.datax.plugin.rdbms.reader;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.datax.common.element.*;
 import com.alibaba.datax.common.exception.DataXException;
