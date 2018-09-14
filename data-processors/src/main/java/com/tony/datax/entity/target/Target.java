@@ -19,7 +19,7 @@ public class Target {
     private Integer sysType;
 
     @db_alias("request_url")
-    private Integer requestUrl;
+    private String requestUrl;
 
     public String getAppKey() {
         return appKey;
@@ -45,11 +45,11 @@ public class Target {
         this.sysType = sysType;
     }
 
-    public Integer getRequestUrl() {
+    public String getRequestUrl() {
         return requestUrl;
     }
 
-    public void setRequestUrl(Integer requestUrl) {
+    public void setRequestUrl(String requestUrl) {
         this.requestUrl = requestUrl;
     }
 }

@@ -46,6 +46,6 @@ public final class Key {
 
     public final static String DRYRUN = "dryRun";
     // 此配置用以覆盖系统自动生成的querySql,原因是需要关联表字段
-    public final static String QUERY_SQL_List = "querySqlList";
+    public final static String QUERY_SQL_TEMPLATE = "querySqlTemplate";
 
 }

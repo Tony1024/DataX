@@ -98,7 +98,7 @@ public class ReflectUtil {
                     "class java.lang.Long")) {
                 Method m = object.getClass().getMethod(
                         "get" + getMethodName(field.getName()));
-                String val = (String) m.invoke(object);
+                String val = m.invoke(object).toString();
                 record.addColumn(new LongColumn(val, columnName));
 
             }
@@ -107,7 +107,7 @@ public class ReflectUtil {
                     "class java.lang.Double")) {
                 Method m = object.getClass().getMethod(
                         "get" + getMethodName(field.getName()));
-                String val = (String) m.invoke(object);
+                String val = m.invoke(object).toString();
                 record.addColumn(new DoubleColumn(val, columnName));
 
             }

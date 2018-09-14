@@ -1,5 +1,6 @@
 package com.alibaba.datax.plugin.rdbms.reader.util;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.common.util.ListUtil;
@@ -9,6 +10,7 @@ import com.alibaba.datax.plugin.rdbms.util.DBUtil;
 import com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode;
 import com.alibaba.datax.plugin.rdbms.util.DataBaseType;
 import com.alibaba.datax.plugin.rdbms.util.TableExpandUtil;
+import com.tony.datax.reflection.Reflector;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,6 +134,17 @@ public final class OriginalConfPretreatmentUtil {
 
         List<String> userConfiguredColumns = originalConfig.getList(Key.COLUMN,
                 String.class);
+
+        if (CollectionUtil.isEmpty(userConfiguredColumns) && isTableMode) {
+            String sourceClass = "com.tony.datax.entity.source." + originalConfig.getString(com.alibaba.datax.plugin.rdbms.util.Constant.SOURCE_CLASS);
+            try {
+                Class sourceClazz = Class.forName(sourceClass);
+                Reflector reflector = Reflector.forClass(sourceClazz);
+                userConfiguredColumns = reflector.getAllColumns();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
         if (isTableMode) {
             if (null == userConfiguredColumns

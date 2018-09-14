@@ -52,11 +52,8 @@ public final class ReaderSplitUtil {
 
             // 说明是配置的 table 方式
             if (isTableMode) {
-                // 关联表的querySqlList
-                List<String> querySqlList = new ArrayList<String>();
-                if (CollectionUtil.isNotEmpty(connConf.getList(Key.QUERY_SQL_List, String.class))) {
-                    querySqlList = connConf.getList(Key.QUERY_SQL_List, String.class);
-                }
+                // querySql 模板
+                String querySqlTemplate = connConf.getString(Key.QUERY_SQL_TEMPLATE);
 
                 // 已在之前进行了扩展和`处理，可以直接使用
                 List<String> tables = connConf.getList(Key.TABLE, String.class);
@@ -88,17 +85,15 @@ public final class ReaderSplitUtil {
                         splittedConfigs.addAll(splittedSlices);
                     }
                 } else {
-                    for (int index = 0; index < tables.size(); index++) {
+                    for (String table : tables) {
                         tempSlice = sliceConfig.clone();
-                        tempSlice.set(Key.TABLE, tables.get(index));
-                        if (querySqlList.size() > 0) {
-                            String querySql = querySqlList.get(index);
-                            if (StringUtils.isNotBlank(querySql)) {
-                                tempSlice.set(Key.QUERY_SQL, querySql);
-                            }
+                        tempSlice.set(Key.TABLE, table);
+                        if (StringUtils.isNotBlank(querySqlTemplate)) {
+                            String querySql = String.format(querySqlTemplate, table);
+                            tempSlice.set(Key.QUERY_SQL, querySql);
                         } else {
-                            String queryColumn = HintUtil.buildQueryColumn(jdbcUrl, tables.get(index), column);
-                            tempSlice.set(Key.QUERY_SQL, SingleTableSplitUtil.buildQuerySql(queryColumn, tables.get(index), where));
+                            String queryColumn = HintUtil.buildQueryColumn(jdbcUrl, table, column);
+                            tempSlice.set(Key.QUERY_SQL, SingleTableSplitUtil.buildQuerySql(queryColumn, table, where));
                         }
                         splittedConfigs.add(tempSlice);
                     }
